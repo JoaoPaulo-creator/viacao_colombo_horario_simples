@@ -1,0 +1,14 @@
+= Como deve funcionar
+
+A partir de determinado horário, uma mensagem deverá chegar no número de whatsapp mais ou menos assim:
+
+[,text]
+----
+Osasco:
+        14:00 | 15:00
+
+S. Sebastião:
+        14:00 | 15:00
+
+----
+
