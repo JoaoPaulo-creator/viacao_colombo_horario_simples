@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"horario-simples/config"
+	"horario-simples/schedules"
 )
 
 func main() {
-	content := "isso eh um teste"
-	r := config.PerformRequest(content)
-	fmt.Println(r)
+	fmt.Println(schedules.ScheduleForTheDay("Osasco"))
 }
