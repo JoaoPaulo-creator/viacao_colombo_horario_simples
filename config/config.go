@@ -13,10 +13,11 @@ import (
 )
 
 type Config struct {
-	SID   string
-	Token string
-	From  string
-	To    string
+	SID      string
+	Token    string
+	From     string
+	To       string
+	Template string
 }
 
 func (c *Config) setToken(token string) {
@@ -35,6 +36,10 @@ func (c *Config) getSID() string {
 	return c.SID
 }
 
+func (c *Config) setContent(content string) {
+	c.Template = content
+}
+
 var c Config
 
 func load() (Config, error) {
@@ -46,6 +51,7 @@ func load() (Config, error) {
 	authToken := os.Getenv("AUTH_TOKEN")
 	from := os.Getenv("FROM_NUMBER")
 	to := os.Getenv("TO_NUMBER")
+	template := os.Getenv("BUSINESS_DAY")
 
 	c = Config{
 		From: from,
@@ -56,11 +62,12 @@ func load() (Config, error) {
 	c.setToken(authToken)
 	c.setSID(sid)
 	c.setToken(authToken)
+	c.setContent(template)
 
 	return c, nil
 }
 
-func start(content string) *twilioApi.CreateMessageParams {
+func start() *twilioApi.CreateMessageParams {
 	cfg, err := load()
 	if err != nil {
 		log.Fatalf("ERRO: %v", err)
@@ -71,15 +78,13 @@ func start(content string) *twilioApi.CreateMessageParams {
 	params := &twilioApi.CreateMessageParams{}
 	params.SetFrom(cfg.From)
 	params.SetTo(cfg.To)
-	params.SetBody(content)
+	params.SetContentSid(cfg.Template)
 
 	return params
 }
 
-var errorCode = []uint{}
-
-func PerformRequest(content string) string {
-	p := start(content)
+func PerformRequest() string {
+	p := start()
 	client := twilio.NewRestClientWithParams(twilio.ClientParams{
 		Username: c.getSID(),
 		Password: c.getToken(),
