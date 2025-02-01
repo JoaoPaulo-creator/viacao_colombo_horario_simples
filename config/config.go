@@ -5,11 +5,19 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 
 	"github.com/twilio/twilio-go"
 	twilioApi "github.com/twilio/twilio-go/rest/api/v2010"
+)
+
+const (
+	SATURDAY string = "SATURDAY"
+	SUNDAY   string = "DOMINGO"
+	UTIL     string = "UTIL" // business day
 )
 
 type Config struct {
@@ -51,12 +59,27 @@ func load() (Config, error) {
 	authToken := os.Getenv("AUTH_TOKEN")
 	from := os.Getenv("FROM_NUMBER")
 	to := os.Getenv("TO_NUMBER")
-	template := os.Getenv("BUSINESS_DAY")
+
+	wk := getWeekDay()
+	var template string
+
+	fmt.Println(wk)
+
+	switch wk {
+	default:
+		template = os.Getenv("BUSINESS_DAY")
+	case SATURDAY:
+		template = os.Getenv("SATURDAY")
+	case SUNDAY:
+		template = os.Getenv("SUNDAY")
+	}
 
 	c = Config{
 		From: from,
 		To:   to,
 	}
+
+	fmt.Println(template)
 
 	c.setSID(sid)
 	c.setToken(authToken)
@@ -67,12 +90,15 @@ func load() (Config, error) {
 	return c, nil
 }
 
+func getWeekDay() string {
+	sToUpper := strings.ToUpper(time.Now().Weekday().String())
+	return sToUpper
+}
+
 func start() *twilioApi.CreateMessageParams {
 	cfg, err := load()
 	if err != nil {
 		log.Fatalf("ERRO: %v", err)
-		// TODO: ver uma forma de retornar uma mensagem erro decente
-		// return fmt.Sprintf("Ocorreu um erro ao tentar carregar variáveis de ambiente")
 	}
 
 	params := &twilioApi.CreateMessageParams{}
