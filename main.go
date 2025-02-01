@@ -2,10 +2,19 @@ package main
 
 import (
 	"fmt"
-	"horario-simples/config"
+	"horario-simples/schedules"
+	"time"
 )
 
-// TODO: implementar a lógica final
+var p = fmt.Println
+
 func main() {
-	fmt.Println(config.PerformRequest())
+	ticker := time.NewTicker(time.Hour * 2) // checa todos os dias
+	defer ticker.Stop()
+
+	for t := range ticker.C {
+		if t.Hour() == 15 && t.Minute() == 05 {
+			p(schedules.ScheduleForTheDay())
+		}
+	}
 }
