@@ -1,19 +1,16 @@
 package schedules
 
-import "time"
-
-const (
-	SATURDAY string = "SABADO"
-	SUNDAY   string = "DOMINGO"
-	UTIL     string = "UTIL" // business day
+import (
+	"horario-simples/config"
+	"time"
 )
 
 type DayOfTheWeek struct {
 	Day string
 }
 
-// TODO: avaliar necessidade de manter esta função
-func ScheduleForTheDay(lineName string) {
+func ScheduleForTheDay() string {
+	return config.PerformRequest()
 
 }
 
@@ -24,11 +21,11 @@ func getDay() DayOfTheWeek {
 	today := time.Now().Weekday()
 	switch today {
 	case time.Sunday:
-		d = dayOfTheWeek(SUNDAY)
+		d = dayOfTheWeek(config.SUNDAY)
 	case time.Saturday:
-		d = dayOfTheWeek(SATURDAY)
+		d = dayOfTheWeek(config.SATURDAY)
 	default:
-		d = dayOfTheWeek(UTIL)
+		d = dayOfTheWeek(config.UTIL)
 	}
 
 	return d
